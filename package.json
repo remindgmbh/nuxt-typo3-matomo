@@ -26,9 +26,9 @@
         "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
         "lint": "npm run lint:script",
         "lint:script": "eslint --ext \".js,.ts,.vue\" .",
-        "prepare": "npm run dev:prepare && nuxt-module-build build",
-        "prepublishOnly": "npm run typecheck && npm run lint",
+        "prepack": "npm run dev:prepare && nuxt-module-build build",
         "preview": "nuxi preview playground",
+        "static-analysis": "npm run dev:prepare && npm run typecheck && npm run lint",
         "typecheck": "nuxi typecheck"
     },
     "dependencies": {
