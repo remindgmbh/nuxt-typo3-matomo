@@ -1,11 +1,11 @@
 {
     "name": "@remindgmbh/nuxt-typo3-matomo",
-    "version": "1.0.0",
+    "version": "0.0.0-development",
     "author": "David Mellen <d.mellen@remind.de>",
     "license": "BSD-3-Clause",
     "repository": {
         "type": "git",
-        "url": "https://github.com/remindgmbh/nuxt-typo3-matomo"
+        "url": "git+https://github.com/remindgmbh/nuxt-typo3-matomo.git"
     },
     "type": "module",
     "exports": {
