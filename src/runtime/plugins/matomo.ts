@@ -1,9 +1,9 @@
 import {
     defineNuxtPlugin,
     useLogger,
-    useT3ApiData,
+    useT3Data,
+    useT3DataUtil,
     useRuntimeConfig,
-    type T3Model,
     type T3SolrModel,
 } from '#imports'
 // @ts-ignore
@@ -25,11 +25,19 @@ export default defineNuxtPlugin((nuxtApp) => {
         router: nuxtApp.$router,
         domains: config.domains,
         trackSiteSearch: () => {
-            const searchResults = getSearchResults()
-            if (searchResults) {
-                return {
-                    keyword: searchResults.data.query ?? '',
-                    resultsCount: searchResults.data.count,
+            const { currentPageData } = useT3Data()
+            if (currentPageData.value) {
+                const { findContentElementByType } = useT3DataUtil()
+                const searchResults =
+                    findContentElementByType<T3SolrModel.Typo3.SolrPiResults>(
+                        'solr_pi_results',
+                        currentPageData.value,
+                    )
+                if (searchResults) {
+                    return {
+                        keyword: searchResults.content.data.query ?? '',
+                        resultsCount: searchResults.content.data.count,
+                    }
                 }
             }
 
@@ -37,18 +45,3 @@ export default defineNuxtPlugin((nuxtApp) => {
         },
     })
 })
-
-function getSearchResults(): T3SolrModel.Typo3.SolrPiResults | undefined {
-    const { currentPageData } = useT3ApiData()
-    if (currentPageData.value) {
-        return Object.values(currentPageData.value.content)
-            .flat()
-            .find(isSolrPiResults)?.content
-    }
-}
-
-function isSolrPiResults(
-    contentElement: T3Model.Typo3.Content.Element,
-): contentElement is T3Model.Typo3.Content.Element<T3SolrModel.Typo3.SolrPiResults> {
-    return contentElement.type === 'solr_pi_results'
-}
