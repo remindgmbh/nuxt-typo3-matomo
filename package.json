@@ -37,8 +37,8 @@
         "vue-matomo": "^4.2.0"
     },
     "peerDependencies": {
-        "@remindgmbh/nuxt-typo3": "^0.0.0-development-1702466770-647192d247c9659400b2e182e05d78c0973cb144",
-        "@remindgmbh/nuxt-typo3-solr": "^1.1.0"
+        "@remindgmbh/nuxt-typo3": "^4.0.0 || develop",
+        "@remindgmbh/nuxt-typo3-solr": "^2.0.0 || develop"
     },
     "peerDependenciesMeta": {
         "@remindgmbh/nuxt-typo3-solr": {
@@ -50,8 +50,8 @@
         "@nuxt/module-builder": "^0.5.4",
         "@nuxt/schema": "^3.8.2",
         "@remindgmbh/eslint-config-nuxt": "^1.0.5",
-        "@remindgmbh/nuxt-typo3": "^0.0.0-development-1702466770-647192d247c9659400b2e182e05d78c0973cb144",
-        "@remindgmbh/nuxt-typo3-solr": "^1.1.0-1702469325-b19888aeee51c80cb2d4a7077942490224ab1bc2",
+        "@remindgmbh/nuxt-typo3": "develop",
+        "@remindgmbh/nuxt-typo3-solr": "develop",
         "@types/node": "^20.9.3",
         "eslint": "^8.54.0",
         "nuxt": "^3.8.2",
