@@ -28,7 +28,7 @@ export default defineNuxtPlugin(() => {
 
     matomo.setTrackerUrl(new URL('matomo.php', config.matomoUrl).href)
     matomo.setSiteId(config.siteId)
-    matomo.setDomains(config.domains)
+    matomo.setDomains(config.domains.split(','))
 
     useHead({
         script: [

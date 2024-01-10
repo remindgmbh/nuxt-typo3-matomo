@@ -5,7 +5,7 @@ import { name, version } from '../package.json'
 export const CONFIG_KEY = 'typo3Matomo'
 
 export interface ModuleOptions {
-    domains: string[]
+    domains: string
     matomoUrl: string
     siteId: number
 }
@@ -17,7 +17,7 @@ export default defineNuxtModule<ModuleOptions>({
         configKey: CONFIG_KEY,
     },
     defaults: {
-        domains: [],
+        domains: '',
         matomoUrl: '',
         siteId: 0,
     },
