@@ -1,16 +1,18 @@
 import {
     defineNuxtPlugin,
+    useHead,
     useLogger,
+    useRuntimeConfig,
+    useRouter,
     useT3Data,
     useT3DataUtil,
-    useRuntimeConfig,
     type T3SolrModel,
 } from '#imports'
-// @ts-ignore
-import VueMatomo from 'vue-matomo'
+import { useMatomo } from '../composables/useMatomo'
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(() => {
     const config = useRuntimeConfig().public.typo3Matomo
+
     const logger = useLogger()
 
     if (!config.matomoUrl || config.siteId === 0) {
@@ -18,30 +20,48 @@ export default defineNuxtPlugin((nuxtApp) => {
         return
     }
 
-    nuxtApp.vueApp.use(VueMatomo, {
-        host: config.matomoUrl,
-        siteId: config.siteId,
-        // No type for $router, see https://github.com/nuxt/nuxt/issues/12737#issuecomment-1397241218
-        router: nuxtApp.$router,
-        domains: config.domains,
-        trackSiteSearch: () => {
-            const { currentPageData } = useT3Data()
-            if (currentPageData.value) {
-                const { findContentElementByType } = useT3DataUtil()
-                const searchResults =
-                    findContentElementByType<T3SolrModel.Typo3.SolrPiResults>(
-                        'solr_pi_results',
-                        currentPageData.value,
-                    )
-                if (searchResults) {
-                    return {
-                        keyword: searchResults.content.data.query ?? '',
-                        resultsCount: searchResults.content.data.count,
-                    }
-                }
-            }
+    window._paq = window._paq || []
 
-            return false
-        },
+    const matomo = useMatomo()
+
+    const router = useRouter()
+
+    matomo.setTrackerUrl(new URL('matomo.php', config.matomoUrl).href)
+    matomo.setSiteId(config.siteId)
+    matomo.setDomains(config.domains)
+
+    useHead({
+        script: [
+            {
+                src: new URL('matomo.js', config.matomoUrl).href,
+                async: true,
+                type: 'text/javascript',
+            },
+        ],
+    })
+
+    router.afterEach((to, from) => {
+        matomo.setReferrerUrl(window.location.origin + from.fullPath)
+        matomo.setCustomUrl(window.location.origin + to.fullPath)
+
+        const { currentPageData } = useT3Data()
+        if (currentPageData.value) {
+            const { findContentElementByType } = useT3DataUtil()
+            const searchResults =
+                findContentElementByType<T3SolrModel.Typo3.SolrPiResults>(
+                    'solr_pi_results',
+                    currentPageData.value,
+                )?.content.data
+            if (searchResults) {
+                matomo.trackSiteSearch(
+                    searchResults.query ?? '',
+                    undefined,
+                    searchResults.count,
+                )
+                return
+            }
+        }
+
+        matomo.trackPageView(to.fullPath)
     })
 })
