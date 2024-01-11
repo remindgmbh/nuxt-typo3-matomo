@@ -2,13 +2,13 @@ import {
     defineNuxtPlugin,
     useHead,
     useLogger,
+    useMatomo,
     useRuntimeConfig,
     useRouter,
     useT3Data,
     useT3DataUtil,
     type T3SolrModel,
 } from '#imports'
-import { useMatomo } from '../composables/useMatomo'
 
 export default defineNuxtPlugin(() => {
     const config = useRuntimeConfig().public.typo3Matomo

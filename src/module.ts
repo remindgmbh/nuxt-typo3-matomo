@@ -1,4 +1,9 @@
-import { defineNuxtModule, addPlugin, createResolver } from '@nuxt/kit'
+import {
+    addPlugin,
+    addImportsDir,
+    createResolver,
+    defineNuxtModule,
+} from '@nuxt/kit'
 import { defu } from 'defu'
 import { name, version } from '../package.json'
 
@@ -30,6 +35,8 @@ export default defineNuxtModule<ModuleOptions>({
             nuxt.options.runtimeConfig.public[CONFIG_KEY],
             options,
         )
+
+        addImportsDir(resolver.resolve('runtime/composables/**/*'))
 
         addPlugin({
             src: resolver.resolve('./runtime/plugins/matomo'),
