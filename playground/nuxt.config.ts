@@ -1,4 +1,8 @@
 export default defineNuxtConfig({
+    devtools: { enabled: true },
+    imports: {
+        autoImport: false,
+    },
     modules: [
         '@remindgmbh/nuxt-typo3',
         '@remindgmbh/nuxt-typo3-solr',
@@ -7,9 +11,5 @@ export default defineNuxtConfig({
     typescript: {
         shim: false,
         strict: true,
-    },
-    devtools: { enabled: true },
-    imports: {
-        autoImport: false,
     },
 })

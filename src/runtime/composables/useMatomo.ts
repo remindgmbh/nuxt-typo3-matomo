@@ -1,6 +1,23 @@
+import { useState } from '#imports'
+
 export function useMatomo() {
+    const isUserOptedOut = useState<boolean>(
+        'matomo-isUserOptedOut',
+        () => false,
+    )
+
     function enableLinkTracking() {
         window._paq.push(['enableLinkTracking'])
+    }
+
+    function forgetUserOptOut() {
+        window._paq.push(['forgetUserOptOut'])
+        setIsUserOptedOut()
+    }
+
+    function optUserOut() {
+        window._paq.push(['optUserOut'])
+        setIsUserOptedOut()
     }
 
     function setCustomUrl(url: string) {
@@ -9,6 +26,14 @@ export function useMatomo() {
 
     function setDomains(domains: string[]) {
         window._paq.push(['setDomains', domains])
+    }
+
+    function setIsUserOptedOut() {
+        window._paq.push([
+            function (this: any) {
+                isUserOptedOut.value = this.isUserOptedOut()
+            },
+        ])
     }
 
     function setReferrerUrl(url: string) {
@@ -41,9 +66,14 @@ export function useMatomo() {
     }
 
     return {
+        isUserOptedOut,
+
         enableLinkTracking,
+        forgetUserOptOut,
+        optUserOut,
         setCustomUrl,
         setDomains,
+        setIsUserOptedOut,
         setReferrerUrl,
         setSiteId,
         setTrackerUrl,

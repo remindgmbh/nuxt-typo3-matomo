@@ -1,11 +1,11 @@
 import {
-    addPlugin,
     addImportsDir,
+    addPlugin,
     createResolver,
     defineNuxtModule,
 } from '@nuxt/kit'
-import { defu } from 'defu'
 import { name, version } from '../package.json'
+import { defu } from 'defu'
 
 export const CONFIG_KEY = 'typo3Matomo'
 
@@ -16,15 +16,15 @@ export interface ModuleOptions {
 }
 
 export default defineNuxtModule<ModuleOptions>({
-    meta: {
-        name,
-        version,
-        configKey: CONFIG_KEY,
-    },
     defaults: {
         domains: '',
         matomoUrl: '',
         siteId: 0,
+    },
+    meta: {
+        configKey: CONFIG_KEY,
+        name,
+        version,
     },
     setup(options, nuxt) {
         const resolver = createResolver(import.meta.url)
@@ -39,8 +39,8 @@ export default defineNuxtModule<ModuleOptions>({
         addImportsDir(resolver.resolve('runtime/composables/**/*'))
 
         addPlugin({
-            src: resolver.resolve('./runtime/plugins/matomo'),
             mode: 'client',
+            src: resolver.resolve('./runtime/plugins/matomo'),
         })
     },
 })

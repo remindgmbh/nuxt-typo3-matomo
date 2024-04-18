@@ -1,16 +1,16 @@
 import {
+    type T3SolrModel,
     defineNuxtPlugin,
     useHead,
     useLogger,
     useMatomo,
-    useRuntimeConfig,
     useRouter,
+    useRuntimeConfig,
     useT3Data,
     useT3DataUtil,
-    type T3SolrModel,
 } from '#imports'
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxt) => {
     const config = useRuntimeConfig().public.typo3Matomo
 
     const logger = useLogger()
@@ -29,12 +29,43 @@ export default defineNuxtPlugin(() => {
     matomo.setTrackerUrl(new URL('matomo.php', config.matomoUrl).href)
     matomo.setSiteId(config.siteId)
     matomo.setDomains(config.domains.split(','))
+    matomo.setIsUserOptedOut()
+
+    nuxt.hook('typo3:parseHtml', (el) => {
+        if (el.value) {
+            const matomoLinks: NodeListOf<HTMLAnchorElement> =
+                el.value.querySelectorAll('a[href^="t3://matomo"]')
+            for (const matomoLink of matomoLinks) {
+                const params = new URLSearchParams(matomoLink.search)
+                const action = params.get('action')
+
+                matomoLink.addEventListener('click', (event) => {
+                    event.preventDefault()
+                    switch (action) {
+                        case 'opt-out':
+                            matomo.optUserOut()
+                            break
+                        case 'opt-in':
+                            matomo.forgetUserOptOut()
+                            break
+                        case 'toggle':
+                            matomo.isUserOptedOut.value
+                                ? matomo.forgetUserOptOut()
+                                : matomo.optUserOut()
+                            break
+                        default:
+                            break
+                    }
+                })
+            }
+        }
+    })
 
     useHead({
         script: [
             {
-                src: new URL('matomo.js', config.matomoUrl).href,
                 async: true,
+                src: new URL('matomo.js', config.matomoUrl).href,
                 type: 'text/javascript',
             },
         ],

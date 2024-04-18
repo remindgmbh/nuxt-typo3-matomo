@@ -1,4 +1,4 @@
-import { ModuleOptions, CONFIG_KEY } from '../../module'
+import { CONFIG_KEY, ModuleOptions } from '../../module'
 
 declare module '@nuxt/schema' {
     interface PublicRuntimeConfig {
