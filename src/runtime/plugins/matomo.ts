@@ -68,7 +68,7 @@ export default defineNuxtPlugin((nuxt) => {
     matomo.setDomains(config.domains.split(','))
     matomo.setIsUserOptedOut()
 
-    function addMatomoLinksEventListener(el: HTMLElement) {
+    function replaceMatomoLinks(el: HTMLElement) {
         const matomoLinks: NodeListOf<HTMLAnchorElement> = el.querySelectorAll(
             'a[href^="t3://matomo"]',
         )
@@ -76,36 +76,40 @@ export default defineNuxtPlugin((nuxt) => {
             const params = new URLSearchParams(matomoLink.search)
             const action = params.get('action')
 
-            matomoLink.addEventListener('click', (event) => {
-                event.preventDefault()
-                switch (action) {
-                    case 'opt-out':
-                        matomo.optUserOut()
-                        break
-                    case 'opt-in':
-                        matomo.forgetUserOptOut()
-                        break
-                    case 'toggle':
+            const button = document.createElement('button')
+            button.type = 'button'
+            button.innerHTML = matomoLink.innerHTML
+            button.title = matomoLink.title
+
+            switch (action) {
+                case 'opt-out':
+                    button.addEventListener('click', matomo.optUserOut)
+                    break
+                case 'opt-in':
+                    button.addEventListener('click', matomo.forgetUserOptOut)
+                    break
+                case 'toggle':
+                    button.addEventListener('click', () => {
                         matomo.isUserOptedOut.value
                             ? matomo.forgetUserOptOut()
                             : matomo.optUserOut()
-                        break
-                    default:
-                        break
-                }
-            })
+                    })
+                    break
+            }
+
+            matomoLink.replaceWith(button)
         }
     }
 
     nuxt.hook('typo3:parseHtml', (el) => {
         if (el.value) {
-            addMatomoLinksEventListener(el.value)
+            replaceMatomoLinks(el.value)
         } else {
             watch(
                 el,
                 () => {
                     if (el.value) {
-                        addMatomoLinksEventListener(el.value)
+                        replaceMatomoLinks(el.value)
                     }
                 },
                 { once: true },
