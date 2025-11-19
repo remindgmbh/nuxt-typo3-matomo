@@ -117,8 +117,7 @@ export default defineNuxtPlugin((nuxt) => {
         }
     })
 
-    router.afterEach((to, from) => {
-        matomo.setReferrerUrl(window.location.origin + from.fullPath)
+    router.afterEach((to) => {
         matomo.setCustomUrl(window.location.origin + to.fullPath)
 
         const { currentPageData } = useT3Data()
